@@ -187,4 +187,4 @@ def create_gradio_interface():
 
 # Launch the Gradio interface
 interface = create_gradio_interface()
-interface.launch()
+interface.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)))
