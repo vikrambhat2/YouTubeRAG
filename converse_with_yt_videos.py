@@ -6,7 +6,17 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.document_loaders import YoutubeLoader
-from langchain_ollama import ChatOllama
+from langchain_groq import ChatGroq
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Access the variables using os.getenv()
+groq_api_key = os.getenv("GROQ_API_KEY")
+
+langchain_llm = ChatGroq(api_key=groq_api_key, model="llama-3.3-70b-versatile")
 
 # Global variable to hold the vector database
 global_vector_db = None
@@ -66,9 +76,6 @@ def answer_question(question, chat_history):
         return "Please process a YouTube video URL first.", chat_history
 
     try:
-        local_llm = 'llama3.2'
-        llama3 = ChatOllama(model=local_llm, temperature=0)
-
         retriever = global_vector_db.as_retriever(search_kwargs={"k": 5})
 
         system_prompt = (
@@ -85,7 +92,7 @@ def answer_question(question, chat_history):
             ]
         )
 
-        question_answer_chain = create_stuff_documents_chain(llama3, prompt)
+        question_answer_chain = create_stuff_documents_chain(langchain_llm, prompt)
         chain = create_retrieval_chain(retriever, question_answer_chain)
 
         response = chain.invoke({"input": question})
