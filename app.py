@@ -139,7 +139,6 @@ def answer_question(question):
         st.session_state.chat_history.append((question, error_message))
         return error_message
 
-
 def main():
     st.set_page_config(page_title="YouTube Video Q&A", layout="wide")
 
@@ -149,32 +148,38 @@ def main():
         "Welcome to the YouTube Video Q&A system. Enter a YouTube URL below, and ask questions based on the video's content."
     )
 
-    # YouTube URL input field
-    youtube_url = st.text_input("Enter YouTube URL:")
+    # Create columns for input and summary
+    col1, col2 = st.columns(2)
 
-    if st.button("Submit"):
-        try:
-            st.session_state.vector_db = process_youtube_url(youtube_url)
-            default_question = "What is the video about?"
-            summary = answer_question(default_question)
-            st.session_state.summary = summary
-            st.success("Video indexed successfully ✅! You can now ask questions about the video in the chatbot.")
-        except Exception as e:
-            st.error(f"Error: {str(e)}")
+    with col1:
+        # YouTube URL input field
+        youtube_url = st.text_input("Enter YouTube URL:")
 
-    # Display video summary if available
-    if "summary" in st.session_state:
-        st.markdown(
-            """
-            <div style="padding: 20px; background-color: #f8f9fa; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                <h2 style="text-align: center; color: #007bff;">Video Summary</h2>
-                <p style="font-size: 16px; line-height: 1.6; color: #555555; padding: 10px; background-color: #ffffff; border-radius: 10px;">
-                    {summary}
-                </p>
-            </div>
-            """.format(summary=st.session_state.summary),
-            unsafe_allow_html=True,
-        )
+        if st.button("Submit"):
+            try:
+                st.session_state.vector_db = process_youtube_url(youtube_url)
+                default_question = "What is the video about?"
+                summary = answer_question(default_question)
+                st.session_state.summary = summary
+                st.session_state.messages = []  # Clear chat history
+                st.success("Video indexed successfully! You can now ask questions about the video in the chatbot.")
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
+
+    with col2:
+        # Display video summary if available
+        if "summary" in st.session_state:
+            st.markdown(
+                """
+                <div style="padding: 20px; background-color: #f8f9fa; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <h2 style="text-align: center; color: #007bff;">Video Summary</h2>
+                    <p style="font-size: 16px; line-height: 1.6; color: #555555; padding: 10px; background-color: #ffffff; border-radius: 10px;">
+                        {summary}
+                    </p>
+                </div>
+                """.format(summary=st.session_state.summary),
+                unsafe_allow_html=True,
+            )
 
     # Display chat interface
     if st.session_state.vector_db:
@@ -206,6 +211,6 @@ def main():
     # Add button styles
     st.markdown(button_style, unsafe_allow_html=True)
 
-
+    
 if __name__ == "__main__":
     main()
