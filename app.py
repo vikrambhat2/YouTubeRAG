@@ -210,7 +210,8 @@ def main():
 
     # Add button styles
     st.markdown(button_style, unsafe_allow_html=True)
+    st.markdown("<footer style='text-align: center; margin-top: 20px;'>&copy; Vikram Bhat</footer>", unsafe_allow_html=True)
 
-    
+
 if __name__ == "__main__":
     main()
