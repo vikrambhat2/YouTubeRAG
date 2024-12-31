@@ -139,23 +139,30 @@ def answer_question(question):
         st.session_state.chat_history.append((question, error_message))
         return error_message
 
-# Main function
+
 def main():
     st.set_page_config(page_title="YouTube Video Q&A", layout="wide")
 
-    with st.sidebar:
-        st.header("YouTube Video Q&A")
-        youtube_url = st.text_input("Enter YouTube URL:")
-        if st.button("Submit"):
-            try:
-                st.session_state.vector_db = process_youtube_url(youtube_url)
-                default_question = "What is the video about?"
-                summary = answer_question(default_question)
-                st.session_state.summary = summary
-                st.success("Video indexed successfully ✅! You can now ask questions about the video in the chatbot.")
-            except Exception as e:
-                st.error(f"Error: {str(e)}")
+    # Title and description
+    st.title("YouTube Video Q&A")
+    st.markdown(
+        "Welcome to the YouTube Video Q&A system. Enter a YouTube URL below, and ask questions based on the video's content."
+    )
 
+    # YouTube URL input field
+    youtube_url = st.text_input("Enter YouTube URL:")
+
+    if st.button("Submit"):
+        try:
+            st.session_state.vector_db = process_youtube_url(youtube_url)
+            default_question = "What is the video about?"
+            summary = answer_question(default_question)
+            st.session_state.summary = summary
+            st.success("Video indexed successfully ✅! You can now ask questions about the video in the chatbot.")
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
+
+    # Display video summary if available
     if "summary" in st.session_state:
         st.markdown(
             """
@@ -169,6 +176,7 @@ def main():
             unsafe_allow_html=True,
         )
 
+    # Display chat interface
     if st.session_state.vector_db:
         st.header("Converse with your Video")
 
