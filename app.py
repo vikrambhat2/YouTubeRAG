@@ -162,7 +162,7 @@ def main():
                 summary = answer_question(default_question)
                 st.session_state.summary = summary
                 st.session_state.messages = []  # Clear chat history
-                st.success("Video indexed successfully! You can now ask questions about the video in the chatbot.")
+                
             except Exception as e:
                 st.error(f"Error: {str(e)}")
 
@@ -181,10 +181,13 @@ def main():
                 unsafe_allow_html=True,
             )
 
-    # Display chat interface
-    if st.session_state.vector_db:
-        st.header("Converse with your Video")
 
+
+    if st.session_state.vector_db:
+        st.success("Video indexed successfully! You can now ask questions about the video.")
+            # Section for "Converse with your Video"
+        st.markdown("<hr>", unsafe_allow_html=True)
+        st.subheader("Converse with your Video")
         # Initialize chat history if not already present
         if "messages" not in st.session_state:
             st.session_state.messages = []
@@ -211,7 +214,6 @@ def main():
     # Add button styles
     st.markdown(button_style, unsafe_allow_html=True)
     st.markdown("<footer style='text-align: center; margin-top: 20px;'>&copy; Vikram Bhat</footer>", unsafe_allow_html=True)
-
 
 if __name__ == "__main__":
     main()
